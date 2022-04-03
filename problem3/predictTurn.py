@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 import glob
 
 
-
-
 def get_undistorted_image_params(filename,image):
     """
     @brief      This function is used to return the K matrix and distortion coefficients
@@ -373,8 +371,9 @@ def show_output_video(org_img,edges_img,bird_img,sliding_img,final_output,warped
     cv2.putText(final_img,'[4] Sliding Window',(1406,1109), cv2.FONT_HERSHEY_COMPLEX_SMALL, 2,(255,255,255), 2, 0)
     # cv2.imwrite('problem3/output_images/output_final.jpg',final_img)
     return final_img
+
     
- 
+    
 # Source points for homography.
 bird_eye_coords_= np.float32([[500, 50], [686, 41], [1078, 253], [231, 259]])
 # Destination points for homography
@@ -388,9 +387,8 @@ filename='problem3/challenge.mp4'
 cap=cv2.VideoCapture(filename)
 print("Detecting Lane from Video ...")
 output_filename='problem3/output_images/output_video.mp4'
-size = (1080, 1920)
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-result = cv2.VideoWriter(output_filename, fourcc, 20, size)
+size=(1920,1180)
+result = cv2.VideoWriter(output_filename,cv2.VideoWriter_fourcc(*'mp4v'), 15, size)
 
 Frame = 0
 while (cap.isOpened()):
@@ -398,7 +396,7 @@ while (cap.isOpened()):
     if ret:
         Frame+=1
         print('Frame: ',Frame)
-        cv2.imshow('Original frame',img)
+        # cv2.imshow('Original frame',img)
         img_edges=process_image(img)
         cropped_img=img[420:720, 40:1280, :]
         h_, mask = cv2.findHomography( bird_eye_coords_,world_coords_,cv2.RANSAC,5.0)
@@ -406,18 +404,20 @@ while (cap.isOpened()):
         # We use the below im_sliding to show the colored image
         im_sliding=cv2.warpPerspective(cropped_img,h_,(300,600),flags=cv2.INTER_LINEAR)
         l_fit,r_fit,out_img,pred,l_,r_,image=sliding_window(im2_n,im_sliding)
-        cv2.imshow('Fitting a Polynomial',out_img)
-        cv2.imshow("Sliding Window Technique",image)
+        # cv2.imshow('Fitting a Polynomial',out_img)
+        # cv2.imshow("Sliding Window Technique",image)
         final_output,left,right,warped_color=project_back(im2_n,l_fit,r_fit,cropped_img,pred)
         lanes_img=draw_lines(im_sliding,left,right)
-        cv2.imshow("Edges",img_edges)
-        cv2.imshow('output',final_output)
-        cv2.imshow('warpped',warped_color)
-        cv2.imshow("Detected Lanes",lanes_img)
+        # cv2.imshow("Edges",img_edges)
+        # cv2.imshow('output',final_output)
+        # cv2.imshow('warpped',warped_color)
+        # cv2.imshow("Detected Lanes",lanes_img)
         fin_img=show_output_video(img,img_edges,im2_n,out_img,final_output,warped_color)
         cv2.imshow('Final Output',fin_img)
+
         result.write(fin_img)
-        print('Prediction: ',pred)
+        # print('Prediction: ',pred)
+        
 
 
 
